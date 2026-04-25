@@ -1,0 +1,7 @@
+flask
+flask-cors
+ibm-watson
+ibm-cloud-sdk-core
+python-dotenv
+cloudant
+pandas

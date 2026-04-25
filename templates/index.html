@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Finance AI Advisor</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'DM Sans', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+    header { background: #1a1d2e; padding: 18px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2d3148; }
+    header h1 { font-family: 'Sora', sans-serif; font-size: 22px; color: #7dd3fc; }
+    header span { font-size: 13px; color: #94a3b8; }
+    .main { display: grid; grid-template-columns: 1fr 340px; gap: 20px; padding: 24px 32px; }
+    .left { display: flex; flex-direction: column; gap: 20px; }
+    .card { background: #1a1d2e; border: 1px solid #2d3148; border-radius: 14px; padding: 20px; }
+    .card h2 { font-family: 'Sora', sans-serif; font-size: 15px; color: #7dd3fc; margin-bottom: 16px; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .stat { background: #0f1117; border-radius: 10px; padding: 16px; text-align: center; border: 1px solid #2d3148; }
+    .stat .val { font-size: 24px; font-weight: 700; font-family: 'Sora', sans-serif; color: #7dd3fc; }
+    .stat .lbl { font-size: 12px; color: #64748b; margin-top: 4px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    input, select, textarea { width: 100%; background: #0f1117; border: 1px solid #2d3148; border-radius: 8px; padding: 10px 14px; color: #e2e8f0; font-size: 14px; font-family: 'DM Sans', sans-serif; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: #7dd3fc; }
+    select option { background: #1a1d2e; }
+    button.primary { width: 100%; background: #3b82f6; color: white; border: none; border-radius: 8px; padding: 11px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 6px; font-family: 'DM Sans', sans-serif; }
+    button.primary:hover { background: #2563eb; }
+    .tx-list { max-height: 220px; overflow-y: auto; }
+    .tx-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #2d3148; font-size: 13px; }
+    .tx-item:last-child { border-bottom: none; }
+    .tx-cat { background: #1e3a5f; color: #7dd3fc; font-size: 11px; padding: 2px 8px; border-radius: 12px; }
+    .tx-amt { color: #f87171; font-weight: 600; }
+    .chatbox { height: 320px; overflow-y: auto; background: #0f1117; border-radius: 10px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
+    .msg.user { background: #3b82f6; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+    .msg.bot { background: #2d3148; color: #e2e8f0; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .chat-input { display: flex; gap: 8px; }
+    .chat-input input { flex: 1; }
+    .chat-input button { background: #3b82f6; color: white; border: none; border-radius: 8px; padding: 10px 16px; cursor: pointer; font-size: 16px; }
+    .nlu-result { background: #0f1117; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 13px; }
+    .nlu-tag { display: inline-block; background: #1e3a5f; color: #7dd3fc; padding: 3px 10px; border-radius: 12px; margin: 3px; font-size: 12px; }
+    canvas { max-height: 220px; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>💰 Finance AI Advisor</h1>
+    <span>Powered by IBM Watson + IBM Cloudant</span>
+  </header>
+
+  <div class="main">
+    <div class="left">
+
+      <!-- Stats -->
+      <div class="stats">
+        <div class="stat">
+          <div class="val" id="total-spent">₹0</div>
+          <div class="lbl">Total Spent</div>
+        </div>
+        <div class="stat">
+          <div class="val" id="top-cat">—</div>
+          <div class="lbl">Top Category</div>
+        </div>
+        <div class="stat">
+          <div class="val" id="tx-count">0</div>
+          <div class="lbl">Transactions</div>
+        </div>
+      </div>
+
+      <!-- Add Expense -->
+      <div class="card">
+        <h2>➕ Add Expense</h2>
+        <div class="form-row">
+          <input type="number" id="amount" placeholder="Amount (₹)" />
+          <select id="category">
+            <option value="Food">🍔 Food</option>
+            <option value="Transport">🚗 Transport</option>
+            <option value="Shopping">🛍️ Shopping</option>
+            <option value="Bills">💡 Bills</option>
+            <option value="Health">🏥 Health</option>
+            <option value="Entertainment">🎬 Entertainment</option>
+            <option value="Other">📦 Other</option>
+          </select>
+        </div>
+        <input type="text" id="desc" placeholder="Description (optional)" style="margin-bottom:12px;" />
+        <button class="primary" onclick="addExpense()">Save Expense</button>
+      </div>
+
+      <!-- Chart -->
+      <div class="card">
+        <h2>📊 Spending by Category</h2>
+        <canvas id="chart"></canvas>
+      </div>
+
+      <!-- NLU -->
+      <div class="card">
+        <h2>🔍 NLU Financial Analyzer</h2>
+        <textarea id="nlu-text" rows="3" placeholder="Type your financial goal... e.g. 'I want to reduce food spending and save for a vacation'"></textarea>
+        <button class="primary" onclick="analyzeText()">Analyze with IBM NLU</button>
+        <div id="nlu-result" class="nlu-result" style="display:none;"></div>
+      </div>
+
+      <!-- Transactions -->
+      <div class="card">
+        <h2>📋 Recent Transactions</h2>
+        <div class="tx-list" id="tx-list">
+          <p style="color:#64748b;font-size:13px;">No transactions yet.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Chatbot -->
+    <div>
+      <div class="card" style="height:calc(100vh - 120px);display:flex;flex-direction:column;">
+        <h2>🤖 Watson Finance Assistant</h2>
+        <div class="chatbox" id="chatbox">
+          <div class="msg bot">Hi! I'm your IBM Watson Finance Advisor 👋 Ask me anything about budgeting, saving, or investing!</div>
+        </div>
+        <div class="chat-input">
+          <input type="text" id="chat-input" placeholder="Ask about finances..." />
+          <button onclick="sendChat()">➤</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- IMPORTANT: Script loaded at bottom -->
+  <script src="/static/script.js"></script>
+
+</body>
+</html>
