@@ -12,26 +12,28 @@
     header { background: #1a1d2e; padding: 18px 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #2d3148; }
     header h1 { font-family: 'Sora', sans-serif; font-size: 22px; color: #7dd3fc; }
     header span { font-size: 13px; color: #94a3b8; }
-    .main { display: grid; grid-template-columns: 1fr 340px; gap: 20px; padding: 24px 32px; }
+    .main { display: grid; grid-template-columns: 1fr 360px; gap: 20px; padding: 24px 32px; }
     .left { display: flex; flex-direction: column; gap: 20px; }
     .card { background: #1a1d2e; border: 1px solid #2d3148; border-radius: 14px; padding: 20px; }
     .card h2 { font-family: 'Sora', sans-serif; font-size: 15px; color: #7dd3fc; margin-bottom: 16px; }
-    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-    .stat { background: #0f1117; border-radius: 10px; padding: 16px; text-align: center; border: 1px solid #2d3148; }
-    .stat .val { font-size: 24px; font-weight: 700; font-family: 'Sora', sans-serif; color: #7dd3fc; }
-    .stat .lbl { font-size: 12px; color: #64748b; margin-top: 4px; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+    .stat { background: #1a1d2e; border: 1px solid #2d3148; border-radius: 10px; padding: 16px; text-align: center; }
+    .stat .val { font-size: 20px; font-weight: 700; font-family: 'Sora', sans-serif; color: #7dd3fc; }
+    .stat .lbl { font-size: 11px; color: #64748b; margin-top: 4px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
     input, select, textarea { width: 100%; background: #0f1117; border: 1px solid #2d3148; border-radius: 8px; padding: 10px 14px; color: #e2e8f0; font-size: 14px; font-family: 'DM Sans', sans-serif; }
     input:focus, select:focus, textarea:focus { outline: none; border-color: #7dd3fc; }
     select option { background: #1a1d2e; }
-    button.primary { width: 100%; background: #3b82f6; color: white; border: none; border-radius: 8px; padding: 11px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 6px; font-family: 'DM Sans', sans-serif; }
+    button.primary { width: 100%; background: #3b82f6; color: white; border: none; border-radius: 8px; padding: 11px; font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 6px; font-family: 'DM Sans', sans-serif; transition: background 0.2s; }
     button.primary:hover { background: #2563eb; }
-    .tx-list { max-height: 220px; overflow-y: auto; }
+    .tx-list { max-height: 260px; overflow-y: auto; }
     .tx-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #2d3148; font-size: 13px; }
     .tx-item:last-child { border-bottom: none; }
     .tx-cat { background: #1e3a5f; color: #7dd3fc; font-size: 11px; padding: 2px 8px; border-radius: 12px; }
     .tx-amt { color: #f87171; font-weight: 600; }
-    .chatbox { height: 320px; overflow-y: auto; background: #0f1117; border-radius: 10px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
+    .tx-del { background: none; border: none; color: #64748b; cursor: pointer; font-size: 14px; padding: 0 6px; }
+    .tx-del:hover { color: #f87171; }
+    .chatbox { height: 340px; overflow-y: auto; background: #0f1117; border-radius: 10px; padding: 14px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; }
     .msg { max-width: 85%; padding: 10px 14px; border-radius: 12px; font-size: 13px; line-height: 1.5; }
     .msg.user { background: #3b82f6; color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
     .msg.bot { background: #2d3148; color: #e2e8f0; align-self: flex-start; border-bottom-left-radius: 4px; }
@@ -41,18 +43,25 @@
     .nlu-result { background: #0f1117; border-radius: 10px; padding: 14px; margin-top: 12px; font-size: 13px; }
     .nlu-tag { display: inline-block; background: #1e3a5f; color: #7dd3fc; padding: 3px 10px; border-radius: 12px; margin: 3px; font-size: 12px; }
     canvas { max-height: 220px; }
+    .warning-card { border-color: #ef4444 !important; display: none; }
+    .warning-card h2 { color: #ef4444 !important; }
+    .health-tip { font-size: 12px; color: #94a3b8; margin-top: 6px; }
+    .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
+    .report-item { background: #0f1117; border-radius: 8px; padding: 10px; font-size: 12px; }
+    .report-item .r-val { font-size: 18px; font-weight: 700; color: #7dd3fc; font-family: 'Sora', sans-serif; }
+    .report-item .r-lbl { color: #64748b; margin-top: 2px; }
   </style>
 </head>
 <body>
   <header>
     <h1>💰 Finance AI Advisor</h1>
-    <span>Powered by IBM Watson + IBM Cloudant</span>
+    <span>Powered by IBM Watson + IBM NLU + IBM Cloudant</span>
   </header>
 
   <div class="main">
     <div class="left">
 
-      <!-- Stats -->
+      <!-- Stats Row -->
       <div class="stats">
         <div class="stat">
           <div class="val" id="total-spent">₹0</div>
@@ -66,6 +75,16 @@
           <div class="val" id="tx-count">0</div>
           <div class="lbl">Transactions</div>
         </div>
+        <div class="stat">
+          <div class="val" id="health-score">—</div>
+          <div class="lbl">Financial Health</div>
+        </div>
+      </div>
+
+      <!-- Budget Warning -->
+      <div class="card warning-card" id="warning-card">
+        <h2>⚠️ Budget Warning</h2>
+        <p id="warning-text" style="font-size:13px;color:#94a3b8;"></p>
       </div>
 
       <!-- Add Expense -->
@@ -93,6 +112,22 @@
         <canvas id="chart"></canvas>
       </div>
 
+      <!-- Monthly Report -->
+      <div class="card">
+        <h2>📅 Monthly Report</h2>
+        <div class="report-grid">
+          <div class="report-item">
+            <div class="r-val" id="month-total">₹0</div>
+            <div class="r-lbl">This Month Spent</div>
+          </div>
+          <div class="report-item">
+            <div class="r-val" id="month-count">0</div>
+            <div class="r-lbl">Transactions</div>
+          </div>
+        </div>
+        <div id="month-name" style="font-size:12px;color:#64748b;margin-top:10px;"></div>
+      </div>
+
       <!-- NLU -->
       <div class="card">
         <h2>🔍 NLU Financial Analyzer</h2>
@@ -116,19 +151,4 @@
       <div class="card" style="height:calc(100vh - 120px);display:flex;flex-direction:column;">
         <h2>🤖 Watson Finance Assistant</h2>
         <div class="chatbox" id="chatbox">
-          <div class="msg bot">Hi! I'm your IBM Watson Finance Advisor 👋 Ask me anything about budgeting, saving, or investing!</div>
-        </div>
-        <div class="chat-input">
-          <input type="text" id="chat-input" placeholder="Ask about finances..." />
-          <button onclick="sendChat()">➤</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- IMPORTANT: Script loaded at bottom -->
-  <script src="/static/script.js"></script>
-
-</body>
-</html>
+          <div class="msg bot">Hi! I'm your IBM Watson Finance Adv
