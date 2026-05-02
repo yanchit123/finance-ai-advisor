@@ -45,11 +45,10 @@
     canvas { max-height: 220px; }
     .warning-card { border-color: #ef4444 !important; display: none; }
     .warning-card h2 { color: #ef4444 !important; }
-    .health-tip { font-size: 12px; color: #94a3b8; margin-top: 6px; }
     .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 8px; }
-    .report-item { background: #0f1117; border-radius: 8px; padding: 10px; font-size: 12px; }
+    .report-item { background: #0f1117; border-radius: 8px; padding: 10px; }
     .report-item .r-val { font-size: 18px; font-weight: 700; color: #7dd3fc; font-family: 'Sora', sans-serif; }
-    .report-item .r-lbl { color: #64748b; margin-top: 2px; }
+    .report-item .r-lbl { color: #64748b; margin-top: 2px; font-size: 12px; }
   </style>
 </head>
 <body>
@@ -61,7 +60,7 @@
   <div class="main">
     <div class="left">
 
-      <!-- Stats Row -->
+      <!-- Stats -->
       <div class="stats">
         <div class="stat">
           <div class="val" id="total-spent">₹0</div>
@@ -81,7 +80,7 @@
         </div>
       </div>
 
-      <!-- Budget Warning -->
+      <!-- Warning -->
       <div class="card warning-card" id="warning-card">
         <h2>⚠️ Budget Warning</h2>
         <p id="warning-text" style="font-size:13px;color:#94a3b8;"></p>
@@ -131,7 +130,7 @@
       <!-- NLU -->
       <div class="card">
         <h2>🔍 NLU Financial Analyzer</h2>
-        <textarea id="nlu-text" rows="3" placeholder="Type your financial goal... e.g. 'I want to reduce food spending and save for a vacation'"></textarea>
+        <textarea id="nlu-text" rows="3" placeholder="Type your financial goal... e.g. I want to reduce food spending and save for a vacation"></textarea>
         <button class="primary" onclick="analyzeText()">Analyze with IBM NLU</button>
         <div id="nlu-result" class="nlu-result" style="display:none;"></div>
       </div>
@@ -151,4 +150,26 @@
       <div class="card" style="height:calc(100vh - 120px);display:flex;flex-direction:column;">
         <h2>🤖 Watson Finance Assistant</h2>
         <div class="chatbox" id="chatbox">
-          <div class="msg bot">Hi! I'm your IBM Watson Finance Adv
+          <div class="msg bot">
+            Hi! 👋 I am your IBM Watson Finance Advisor.<br><br>
+            I can help you with:<br>
+            💰 Budgeting tips<br>
+            🎯 Savings goals<br>
+            📈 Investment advice<br>
+            💳 Debt management<br>
+            📑 Tax saving<br><br>
+            What would you like help with today?
+          </div>
+        </div>
+        <div class="chat-input">
+          <input type="text" id="chat-input" placeholder="Ask about finances..." />
+          <button onclick="sendChat()">➤</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/static/script.js?v=3"></script>
+</body>
+</html>
